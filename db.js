@@ -1,9 +1,20 @@
 const { createClient } = require("@libsql/client");
 
-const client = createClient({
-  url: process.env.TURSO_DATABASE_URL,
-  authToken: process.env.TURSO_AUTH_TOKEN
-});
+let client = null;
+
+function getClient() {
+  if (client) return client;
+
+  const url = process.env.TURSO_DATABASE_URL;
+  const authToken = process.env.TURSO_AUTH_TOKEN;
+
+  if (!url || !authToken) {
+    throw new Error("Missing TURSO_DATABASE_URL or TURSO_AUTH_TOKEN");
+  }
+
+  client = createClient({ url, authToken });
+  return client;
+}
 
 function now() {
   return new Date().toISOString();
@@ -32,7 +43,8 @@ function sanitizeCss(css) {
 }
 
 async function exec(sql, args = []) {
-  return client.execute({ sql, args });
+  const c = getClient();
+  return c.execute({ sql, args });
 }
 
 async function get(sql, args = []) {
@@ -47,10 +59,7 @@ async function all(sql, args = []) {
 
 async function run(sql, args = []) {
   const r = await exec(sql, args);
-  return {
-    rowsAffected: r.rowsAffected || 0,
-    lastInsertRowid: r.lastInsertRowid
-  };
+  return { rowsAffected: r.rowsAffected || 0, lastInsertRowid: r.lastInsertRowid };
 }
 
 async function migrate() {
@@ -110,14 +119,4 @@ async function migrate() {
   `);
 }
 
-module.exports = {
-  now,
-  normalizeSlug,
-  clamp,
-  sanitizeCss,
-  exec,
-  get,
-  all,
-  run,
-  migrate
-};
+module.exports = { now, normalizeSlug, clamp, sanitizeCss, exec, get, all, run, migrate };
