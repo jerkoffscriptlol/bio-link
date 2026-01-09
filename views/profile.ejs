@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/public/profile.css" />
+  <title><%= page.display_name || page.slug %></title>
+  <style>
+    :root { --accent: <%= page.accent || "#8b5cf6" %>; }
+    <%- page.custom_css || "" %>
+  </style>
+</head>
+<body class="profile" style="<%= page.bg_url ? `background-image:url('${page.bg_url.replaceAll("'", "%27")}')` : "" %>">
+  <div class="overlay"></div>
+
+  <div class="cardp">
+    <div class="header">
+      <% if (page.avatar_url) { %>
+        <img class="avatar" src="<%= page.avatar_url %>" alt="" />
+      <% } else { %>
+        <div class="avatar ph"></div>
+      <% } %>
+      <div>
+        <div class="name"><%= page.display_name || page.slug %></div>
+        <div class="bio"><%= page.bio || "" %></div>
+      </div>
+    </div>
+
+    <div class="links">
+      <% links.forEach(l => { %>
+        <a class="link" href="<%= l.url %>" target="_blank" rel="noopener noreferrer">
+          <span><%= l.label %></span>
+          <span class="dot"></span>
+        </a>
+      <% }) %>
+    </div>
+
+    <% if (page.song_url) { %>
+      <div class="music">
+        <button id="play">Play</button>
+        <button id="pause" class="ghost">Pause</button>
+        <span class="muted">background audio</span>
+      </div>
+      <audio id="audio" src="<%= page.song_url %>" loop preload="auto"></audio>
+      <script>
+        const a = document.getElementById("audio");
+        a.volume = Number("<%= page.song_volume %>") || 0.4;
+        const play = document.getElementById("play");
+        const pause = document.getElementById("pause");
+        play.onclick = async () => { try { await a.play(); } catch(e) {} };
+        pause.onclick = () => a.pause();
+      </script>
+    <% } %>
+
+    <div class="foot">made with iqsm bio</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<%- include("layout", { title: "Sign up", body: `
+  <div class="card">
+    <h1>Sign up</h1>
+    ${error ? `<div class="err">${error}</div>` : ""}
+    <form method="post" action="/signup" class="form">
+      <input name="invite" placeholder="invite key" />
+      <input name="username" placeholder="username (a-z 0-9 _)" autocomplete="username" />
+      <input name="password" placeholder="password" type="password" autocomplete="new-password" />
+      <button>Create account</button>
+    </form>
+    <div class="muted"><a href="/login">Back to login</a></div>
+  </div>
+` }) %>

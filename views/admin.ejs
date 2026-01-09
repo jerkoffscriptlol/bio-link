@@ -1,0 +1,29 @@
+<%- include("layout", { title: "Admin", body: `
+  <div class="topbar">
+    <div class="who">Admin panel</div>
+    <div class="right">
+      <a class="ghostlink" href="/dashboard">Dashboard</a>
+      <form method="post" action="/logout"><button class="ghost">Logout</button></form>
+    </div>
+  </div>
+
+  <div class="card">
+    <h1>Invite keys</h1>
+    <form method="post" action="/admin/keys">
+      <button>Generate new key</button>
+    </form>
+
+    <div style="height:12px"></div>
+
+    <table class="table">
+      <tr><th>Key</th><th>Used</th><th>Created</th></tr>
+      ${keys.map(k => `
+        <tr>
+          <td><code>${k.key}</code></td>
+          <td>${k.used_by ? `yes (user ${k.used_by})` : "no"}</td>
+          <td>${k.created_at}</td>
+        </tr>
+      `).join("")}
+    </table>
+  </div>
+` }) %>

@@ -1,0 +1,59 @@
+<%- include("layout", { title: "Dashboard", body: `
+  <div class="topbar">
+    <div class="who">Logged in as <b>${user.username}</b> ${isAdmin ? `<span class="pill">admin</span>` : ""}</div>
+    <form method="post" action="/logout"><button class="ghost">Logout</button></form>
+  </div>
+
+  <div class="card">
+    <h1>Customize your page</h1>
+    ${error ? `<div class="err">${error}</div>` : ""}
+    ${ok ? `<div class="ok">${ok}</div>` : ""}
+
+    <form method="post" action="/dashboard" class="form">
+      <label>Slug (your URL)</label>
+      <input name="slug" value="${page.slug}" />
+      <div class="muted">Your link: <a href="/${page.slug}" target="_blank">/${page.slug}</a></div>
+
+      <label>Display name</label>
+      <input name="display_name" value="${page.display_name || ""}" />
+
+      <label>Bio</label>
+      <textarea name="bio">${page.bio || ""}</textarea>
+
+      <label>Avatar URL</label>
+      <input name="avatar_url" value="${page.avatar_url || ""}" />
+
+      <label>Background image URL</label>
+      <input name="bg_url" value="${page.bg_url || ""}" />
+
+      <label>Accent color</label>
+      <input name="accent" value="${page.accent || "#8b5cf6"}" />
+
+      <label>Song URL (mp3/ogg)</label>
+      <input name="song_url" value="${page.song_url || ""}" />
+
+      <label>Song volume (0 to 1)</label>
+      <input name="song_volume" value="${page.song_volume}" />
+
+      <h2>Links</h2>
+      ${Array.from({length: 12}).map((_, i) => {
+        const l = links[i] || {label:"", url:""};
+        return `
+          <div class="row">
+            <input name="label_${i}" placeholder="label" value="${(l.label||"").replaceAll('"','&quot;')}" />
+            <input name="url_${i}" placeholder="https://..." value="${(l.url||"").replaceAll('"','&quot;')}" />
+          </div>
+        `;
+      }).join("")}
+
+      <h2>Custom CSS (advanced)</h2>
+      <textarea name="custom_css" placeholder="body{...}">${(page.custom_css || "").replaceAll("<","&lt;")}</textarea>
+
+      <button>Save</button>
+    </form>
+
+    ${isAdmin ? `<div class="muted" style="margin-top:14px">
+      <a href="/admin">Admin panel</a>
+    </div>` : ""}
+  </div>
+` }) %>
